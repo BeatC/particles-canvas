@@ -12,8 +12,8 @@ class Point {
   }
 
   move() {
-    this.x = this.x + Math.cos(this.angle);
-    this.y = this.y + Math.sin(this.angle);
+    this.x = this.x + Math.cos(this.angle) * this.velocity;
+    this.y = this.y + Math.sin(this.angle) * this.velocity;
   }
 }
 
@@ -111,8 +111,9 @@ class Demo {
     this.canvas.onclick = (e) => {
       let x = e.layerX;
       let y = e.layerY;
-      let velocity = Math.random() * 1;
+      let velocity = Math.random() + 0.3;
       let angle = Math.random() * (Math.PI * 2);
+      console.log(velocity);
 
       let options = { x, y, velocity, angle };
       let point = new Point(options);
@@ -123,7 +124,7 @@ class Demo {
   clear() {
     let ctx = this.ctx;
     ctx.save();
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "#e8eaec";
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     ctx.restore();
   }
@@ -144,6 +145,7 @@ class Demo {
         this.drawer.drawPoint(point);
       });
     }
+    this.drawer.drawVignette(this.canvas.width, this.canvas.height);
     requestAnimationFrame(this.mainLoop.bind(this));
   }
 
@@ -162,9 +164,14 @@ class Drawer {
   drawPoint(point) {
     let ctx = this.ctx;
     ctx.save();
+    ctx.beginPath();
     ctx.translate(point.x, point.y);
-    ctx.fillStyle = "#ff0000";
-    ctx.fillRect(-5, -5, 10, 10);
+    ctx.arc(0, 0, 5, 0, Math.PI * 2, false);
+    ctx.fillStyle = "#97b1d8";
+    ctx.strokeStyle = "#43536c"
+    ctx.lineWidth = 1;
+    ctx.fill();
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -182,13 +189,36 @@ class Drawer {
   drawConnection(start, end) {
     let ctx = this.ctx;
     ctx.beginPath();
-    ctx.strokeStyle = "green";
+    ctx.strokeStyle = "#141328";
     ctx.moveTo(start.x, start.y);
     ctx.lineTo(end.x, end.y);
     ctx.stroke();
   }
+
+  drawBackground() {
+
+  }
+
+  drawVignette(width, height) {
+    let ctx = this.ctx;
+    let centerX = width / 2;
+    let centerY = height / 2;
+    let innerRadius = width / 2.5;
+    ctx.save();
+
+    let grd = ctx.createRadialGradient(centerX, centerY, innerRadius, centerX, centerY, width);
+    grd.addColorStop(0,"transparent");
+    grd.addColorStop(1,"#212d41");
+
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
+  }
 }
 
+let canvas = document.getElementById('scene');
+canvas.width = screen.availWidth;
+canvas.height = screen.availHeight;
 const demo = new Demo({
   id: 'scene',
   connectionFn: (a, b) => {
