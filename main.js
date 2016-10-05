@@ -113,7 +113,6 @@ class Demo {
       let y = e.layerY;
       let velocity = Math.random() + 0.3;
       let angle = Math.random() * (Math.PI * 2);
-      console.log(velocity);
 
       let options = { x, y, velocity, angle };
       let point = new Point(options);
@@ -166,7 +165,7 @@ class Drawer {
     ctx.save();
     ctx.beginPath();
     ctx.translate(point.x, point.y);
-    ctx.arc(0, 0, 5, 0, Math.PI * 2, false);
+    ctx.arc(0, 0, 3, 0, Math.PI * 2, false);
     ctx.fillStyle = "#97b1d8";
     ctx.strokeStyle = "#43536c"
     ctx.lineWidth = 1;
